@@ -1,6 +1,6 @@
 #include"shaderClass.h"
 
-// reads shader files and outputs all contents
+// function to read contents of shader files
 std::string get_file_contents(const char* filename)
 {
 	std::ifstream in(filename, std::ios::binary);
@@ -14,54 +14,55 @@ std::string get_file_contents(const char* filename)
 		in.close();
 		return(contents);
 	}
-	throw(errno);
+	// error checking if file cannot be opened
+	throw(errno); 
 }
-
+// Shader class constructor to use verterx and fragment shaders
 Shader::Shader(const char* vertexFile, const char* fragmentFile)
 {
-	// read the shader files and stores them in strings
+	// Read shader source code 
 	std::string vertexCode = get_file_contents(vertexFile);
 	std::string fragmentCode = get_file_contents(fragmentFile);
 
-	// convert the strings into char arrays
+	// Convert shader source into char arrays
 	const char* vertexSource = vertexCode.c_str();
 	const char* fragmentSource = fragmentCode.c_str();
 
-	// Compile VertexShader into machine
+	// Compile Vertex Shader
 	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertexSource, NULL);
 	glCompileShader(vertexShader);
 	compileErrors(vertexShader, "VERTEX");
 
-	// Compile FragmentShader into machine
+	// Compile Fragment Shader
 	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
 	glCompileShader(fragmentShader);
 	compileErrors(fragmentShader, "FRAGMENT");
 
-	// Compile ShaderProgram into machine
+	// Compile ShaderProgram	and link the shaders
 	ID = glCreateProgram();
 	glAttachShader(ID, vertexShader);
 	glAttachShader(ID, fragmentShader);
 	glLinkProgram(ID);
 	compileErrors(ID, "PROGRAM");
 
-
+	// Deletes shaders once used and no longer needed
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
 }
-
+// Activates shader 
 void Shader::Activate()
 {
 	glUseProgram(ID);
 }
-
+// Delete shader 
 void Shader::Delete()
 {
 	glDeleteProgram(ID);
 }
-
+// Check for shader and linking errors
 void Shader::compileErrors(unsigned int shader, const char* type)
 {
 	GLint hasCompiled;

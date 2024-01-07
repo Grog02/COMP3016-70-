@@ -1,20 +1,20 @@
 #include "texture.h"
-
+// Loads and creates a texture
 Texture::Texture(const char* image, const char* texType, GLuint slot)
 {
-	// gets texture type and assigns it to type
+	// Assign texture type
 	type = texType;
 
-	// stores image basic properties 
+	// Basic image properties 
 	int widthImg, heightImg, numColCh;
 	
-	// flips image so it is the right way around
+	// flip image on load
 	stbi_set_flip_vertically_on_load(true);
 
 	// reads image from file 
 	unsigned char* bytes = stbi_load(image, &widthImg, &heightImg, &numColCh, 0);
 
-	// Check if the image was loaded
+	// Error checking to see if image loads successfully
 	if (bytes == nullptr)
 	{
 		std::cerr << "Failed to load texture: " << image << std::endl;
@@ -22,10 +22,10 @@ Texture::Texture(const char* image, const char* texType, GLuint slot)
 		
 	}
 
-	// creates openGL texture
+	// Generates OpenGL texture
 	glGenTextures(1, &ID);
 
-	// assigns texture to unit	
+	// assigns texture to texture unit
 	glActiveTexture(GL_TEXTURE0 + slot);
 	unit = slot;
 	glBindTexture(GL_TEXTURE_2D, ID);
@@ -38,6 +38,7 @@ Texture::Texture(const char* image, const char* texType, GLuint slot)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_NEAREST);
 
+	// Creates texture with the appropriate colour format
 	if (numColCh == 4)
 		glTexImage2D
 		(
@@ -97,18 +98,18 @@ void Texture::texUnit(Shader& shader, const char* uniform, GLuint unit)
 	shader.Activate();
 	glUniform1i(texUni, unit);
 }
-
+// Binds texture
 void Texture::Bind()
 {
 	glActiveTexture(GL_TEXTURE0 + unit);
 	glBindTexture(GL_TEXTURE_2D, ID);
 }
-
+// Unbinds texture
 void Texture::Unbind()
 {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
-
+// Deletes texture
 void Texture::Delete()
 {
 	glDeleteTextures(1, &ID);
