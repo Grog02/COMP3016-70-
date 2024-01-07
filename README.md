@@ -1,6 +1,11 @@
 # COMP3016-70-
 ## Overview
-This application is a 3d Visualisation of Space. With models loaded to represent planets and 
+This application is a 3d Visualisation of Space. With models loaded to represent planets and realistic planet-looking textures to add to the space theme.
+The Planet Models have been created in Blender by myself and I have used OpenGL to load these into a window.
+
+
+## Installation and Running the application
+Open the .exe application file and run it. A CMD window should open before another Window opens with "Space!" as the title in the top left.
 
 ## Features
 ### 3D Model loading
@@ -9,10 +14,11 @@ This application is a 3d Visualisation of Space. With models loaded to represent
 ### Texture loading
 Textures downloaded from [https://polyhaven.com/textures](url)
 
+
 ### Lighting
-Lighting (light.vert/frag files) is used to make the models visible and not pitch black (as space is naturally black)
+Lighting (light.vert/frag files) is used to make the models visible and not pitch black (as space is naturally black).
 ### Camera controls
-WASD to move camera and left shift to move camera faster, space to pan up, left control to pan down
+WASD to move camera and left shift to move camera faster, space to pan up, left control to pan down.
 ### Shaders
 Shaders (default.vert/frag files) is used.
 ## References
@@ -23,4 +29,4 @@ Shaders (default.vert/frag files) is used.
 ![image](https://github.com/Grog02/COMP3016-70-/assets/91668510/decfe159-9d4b-47ee-a84e-8249fc904b5d)
 
 
-My initials (GR) have been placed on one of the planets as my signature
+My initials (GR) have been placed on one of the planets as my signature.
