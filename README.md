@@ -4,7 +4,6 @@ This application is a 3d Visualisation of Space. With models loaded to represent
 The Planet Models have been created in Blender by myself and I have used OpenGL to load these into a window.
 
 ## Video 
-[https://youtu.be/6vTTx0XBdnk](url)
 https://youtu.be/6vTTx0XBdnk
 
 
