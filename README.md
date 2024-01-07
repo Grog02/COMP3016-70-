@@ -3,6 +3,10 @@
 This application is a 3d Visualisation of Space. With models loaded to represent planets and realistic planet-looking textures to add to the space theme.
 The Planet Models have been created in Blender by myself and I have used OpenGL to load these into a window.
 
+## Video 
+[https://youtu.be/6vTTx0XBdnk](url)
+
+
 ## Inspiration
 My inspiration behind this scene was space in general because it always looks nice despite the minamilist look to it, with solid black light and only a few small stars and such.
 Essentiall simulating this in OpenGL was a success and the end result fulfilled my expectatons from my initial vision.
