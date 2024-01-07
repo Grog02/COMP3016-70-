@@ -17,8 +17,8 @@
 			"mesh": 0,
 			"name": "Sphere",
 			"translation": [
-				-7,
-				-4,
+				0,
+				0,
 				25
 			]
 		}
@@ -26,7 +26,7 @@
 	"materials":[
 		{
 			"doubleSided":true,
-			"name":"baseColor",
+			"name":"baseColor2",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
 					"index":0
@@ -60,9 +60,9 @@
 	],
 	"images":[
 		{
-			"mimeType":"image/jpeg",
-			"name":"baseColor",
-			"uri":"Textures/baseColor.jpg"
+			"mimeType":"image/png",
+			"name":"baseColor2",
+			"uri":"Textures/baseColor2.png"
 		}
 	],
 	"accessors":[

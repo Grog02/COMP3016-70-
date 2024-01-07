@@ -1,6 +1,5 @@
 #include "Mesh.h"
 #include "Model.h"
-#include "Sphere.h"
 #include "texture.h"
 #include "Camera.h"
 #pragma
@@ -12,21 +11,21 @@ int main()
 #pragma region GLFW Window
 	// Initialise GLFW
 	glfwInit();
-	// Tell GLFW what version of OpenGL is being used (in this case - 3.3)
+	// Specify OpenGL version (3.3)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	// Using modern functions 
+	// Using modern OpenGL functions 
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	// Create GLFWwindow of 800 x 800
+	// Create GLFWwindow of specified height and width
 	GLFWwindow* window = glfwCreateWindow(width, height, "Space!", NULL, NULL);
-	// error checking if window fails
+	// Error checking for window
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW Window" << std::endl;
 		glfwTerminate();
 		return -1;
 	}
-	//  Bring window into current context
+	// Make the context current
 	glfwMakeContextCurrent(window);
 #pragma endregion GLFW Window
 	// Load GLAD 
@@ -35,7 +34,7 @@ int main()
 	// Specify Viewport of the window
 	glViewport(0, 0, width, height);
 	
-	// Generates Shader object using shaders default.vert/frag and light.vert/frag
+	// Shader program initialising
 	Shader shaderProgram("default.vert", "default.frag");
 	Shader lightShader("light.vert", "light.frag");
 	
@@ -58,7 +57,7 @@ int main()
 	// depth testing 
 	glEnable(GL_DEPTH_TEST);
 	
-	// sets up a camera model with dimensions declared at the start and at 0, 0, 0
+	// Camera setup with positions
 	Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
 
 	// a Model object loading from the specified file paths
@@ -71,6 +70,7 @@ int main()
 	Model model6("models/planet7/planet.gltf");
 	Model model7("models/planet8/planet.gltf");
 	Model model8("models/planet9/moon.gltf");
+	Model model9("models/planet10/jupiter.gltf");
 
 	// Swap back and front Buffer
 	glfwSwapBuffers(window);
@@ -84,7 +84,7 @@ int main()
 		// clear back and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// camera inputs
+		// Process camera inputs
 		camera.Inputs(window);
 		// update camera's matrix when inputs are given
 		camera.UpdateMatrix(45.0f, 0.1f, 100.0f);
@@ -102,6 +102,7 @@ int main()
 		model6.Draw(shaderProgram, camera);
 		model7.Draw(shaderProgram, camera);
 		model8.Draw(shaderProgram, camera);
+		//model9.Draw(shaderProgram, camera);
 		
 
 		// swap back buffer with front

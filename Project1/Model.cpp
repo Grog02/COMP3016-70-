@@ -1,37 +1,38 @@
 #include"Model.h"
-
+// Constructor to load a 3D model from file
 Model::Model(const char* file)
 {
-	// Make a JSON object
+	// Parse JSON file to get file contents
 	std::string text = get_file_contents(file);
 	JSON = json::parse(text);
 
-	// Get the binary data
+	// Retrieve binary data for model
 	Model::file = file;
 	data = getData();
 
-	// Traverse all nodes
+	// Go through each node of the file
 	traverseNode(0);
 }
 
+// Function to draw the model with shader and camera
 void Model::Draw(Shader& shader, Camera& camera)
 {
-	// Go over all meshes and draw each one
+	// Go through each mesh and draw each them
 	for (unsigned int i = 0; i < meshes.size(); i++)
 	{
 		meshes[i].Mesh::Draw(shader, camera, matricesMeshes[i]);
 	}
 }
-
+// Function to load a mesh from the model
 void Model::loadMesh(unsigned int indexMesh)
 {
-	// Get all accessor indices
+	// Access mesh data in the JSON Structure
 	unsigned int posAccInd = JSON["meshes"][indexMesh]["primitives"][0]["attributes"]["POSITION"];
 	unsigned int normalAccInd = JSON["meshes"][indexMesh]["primitives"][0]["attributes"]["NORMAL"];
 	unsigned int texAccInd = JSON["meshes"][indexMesh]["primitives"][0]["attributes"]["TEXCOORD_0"];
 	unsigned int indAccInd = JSON["meshes"][indexMesh]["primitives"][0]["indices"];
 
-	// Use accessor indices to get all vertices components
+	// Receive and process position, normal and texture data
 	std::vector<float> posVec = getFloats(JSON["accessors"][posAccInd]);
 	std::vector<glm::vec3> positions = groupFloatsVec3(posVec);
 	std::vector<float> normalVec = getFloats(JSON["accessors"][normalAccInd]);
@@ -39,21 +40,21 @@ void Model::loadMesh(unsigned int indexMesh)
 	std::vector<float> texVec = getFloats(JSON["accessors"][texAccInd]);
 	std::vector<glm::vec2> texUVs = groupFloatsVec2(texVec);
 
-	// Combine all the vertex components and also get the indices and textures
+	// Create mesh with assembled vertices and add to model
 	std::vector<Vertex> vertices = assembleVertices(positions, normals, texUVs);
 	std::vector<GLuint> indices = getIndices(JSON["accessors"][indAccInd]);
 	std::vector<Texture> textures = getTextures();
 
-	// Combine the vertices, indices, and textures into a mesh
+	// Assembles vertices and creates mesh
 	meshes.push_back(Mesh(vertices, indices, textures));
 }
-
+// Function to go through each node and process them
 void Model::traverseNode(unsigned int nextNode, glm::mat4 matrix)
 {
-	// Current node
+	// The current node's data
 	json node = JSON["nodes"][nextNode];
 
-	// Get translation if it exists
+	// Get translation, rotation, scale and matrix data if they exist
 	glm::vec3 translation = glm::vec3(0.0f, 0.0f, 0.0f);
 	if (node.find("translation") != node.end())
 	{
@@ -61,8 +62,7 @@ void Model::traverseNode(unsigned int nextNode, glm::mat4 matrix)
 		for (unsigned int i = 0; i < node["translation"].size(); i++)
 			transValues[i] = (node["translation"][i]);
 		translation = glm::make_vec3(transValues);
-	}
-	// Get quaternion if it exists
+	}	
 	glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
 	if (node.find("rotation") != node.end())
 	{
@@ -75,7 +75,6 @@ void Model::traverseNode(unsigned int nextNode, glm::mat4 matrix)
 		};
 		rotation = glm::make_quat(rotValues);
 	}
-	// Get scale if it exists
 	glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
 	if (node.find("scale") != node.end())
 	{
@@ -84,7 +83,6 @@ void Model::traverseNode(unsigned int nextNode, glm::mat4 matrix)
 			scaleValues[i] = (node["scale"][i]);
 		scale = glm::make_vec3(scaleValues);
 	}
-	// Get matrix if it exists
 	glm::mat4 matNode = glm::mat4(1.0f);
 	if (node.find("matrix") != node.end())
 	{
@@ -94,20 +92,20 @@ void Model::traverseNode(unsigned int nextNode, glm::mat4 matrix)
 		matNode = glm::make_mat4(matValues);
 	}
 
-	// Initialize matrices
+	// Initialize the matrices
 	glm::mat4 trans = glm::mat4(1.0f);
 	glm::mat4 rot = glm::mat4(1.0f);
 	glm::mat4 sca = glm::mat4(1.0f);
 
-	// Use translation, rotation, and scale to change the initialized matrices
+	// Change the initialised meshes with transform, rotation and scale
 	trans = glm::translate(trans, translation);
 	rot = glm::mat4_cast(rotation);
 	sca = glm::scale(sca, scale);
 
-	// Multiply all matrices together
+	// Multiply the matrices 
 	glm::mat4 matNextNode = matrix * matNode * trans * rot * sca;
 
-	// Check if the node contains a mesh and if it does load it
+	// If node has mesh, load it
 	if (node.find("mesh") != node.end())
 	{
 		translationsMeshes.push_back(translation);
@@ -118,26 +116,26 @@ void Model::traverseNode(unsigned int nextNode, glm::mat4 matrix)
 		loadMesh(node["mesh"]);
 	}
 
-	// Check if the node has children, and if it does, apply this function to them with the matNextNode
+	// If node has children objects, call traverseNode again
 	if (node.find("children") != node.end())
 	{
 		for (unsigned int i = 0; i < node["children"].size(); i++)
 			traverseNode(node["children"][i], matNextNode);
 	}
 }
-
+// Gets binary data from the file
 std::vector<unsigned char> Model::getData()
 {
-	// Create a place to store the raw text, and get the uri of the .bin file
+	// Create strings to store the raw data and uri of the .bin file
 	std::string bytesText;
 	std::string uri = JSON["buffers"][0]["uri"];
 
-	// Store raw text data into bytesText
+	// Store the raw data 
 	std::string fileStr = std::string(file);
 	std::string fileDirectory = fileStr.substr(0, fileStr.find_last_of('/') + 1);
 	bytesText = get_file_contents((fileDirectory + uri).c_str());
 
-	// Transform the raw text data into bytes and put them in a vector
+	// Convert raw text data into bytes and put them in a vector
 	std::vector<unsigned char> data(bytesText.begin(), bytesText.end());
 	return data;
 }
@@ -146,17 +144,17 @@ std::vector<float> Model::getFloats(json accessor)
 {
 	std::vector<float> floatVec;
 
-	// Get properties from the accessor
+	// Accessor properties
 	unsigned int buffViewInd = accessor.value("bufferView", 1);
 	unsigned int count = accessor["count"];
 	unsigned int accByteOffset = accessor.value("byteOffset", 0);
 	std::string type = accessor["type"];
 
-	// Get properties from the bufferView
+	// buffer views properties
 	json bufferView = JSON["bufferViews"][buffViewInd];
 	unsigned int byteOffset = bufferView["byteOffset"];
 
-	// Interpret the type and store it into numPerVert
+	// Determine components per vertice based on the type
 	unsigned int numPerVert;
 	if (type == "SCALAR") numPerVert = 1;
 	else if (type == "VEC2") numPerVert = 2;
@@ -164,9 +162,10 @@ std::vector<float> Model::getFloats(json accessor)
 	else if (type == "VEC4") numPerVert = 4;
 	else throw std::invalid_argument("Type is invalid (not SCALAR, VEC2, VEC3, or VEC4)");
 
-	// Go over all the bytes in the data at the correct place using the properties from above
+	// Calculate starting position in the data and the length
 	unsigned int beginningOfData = byteOffset + accByteOffset;
 	unsigned int lengthOfData = count * 4 * numPerVert;
+	// Loop through the buffer and get the floats
 	for (unsigned int i = beginningOfData; i < beginningOfData + lengthOfData; i)
 	{
 		unsigned char bytes[] = { data[i++], data[i++], data[i++], data[i++] };
@@ -182,17 +181,17 @@ std::vector<GLuint> Model::getIndices(json accessor)
 {
 	std::vector<GLuint> indices;
 
-	// Get properties from the accessor
+	// Accessor properties
 	unsigned int buffViewInd = accessor.value("bufferView", 0);
 	unsigned int count = accessor["count"];
 	unsigned int accByteOffset = accessor.value("byteOffset", 0);
 	unsigned int componentType = accessor["componentType"];
 
-	// Get properties from the bufferView
+	// buffer views properties
 	json bufferView = JSON["bufferViews"][buffViewInd];
 	unsigned int byteOffset = bufferView["byteOffset"];
 
-	// Get indices with regards to their type: unsigned int, unsigned short, or short
+	// Get indices based on component type
 	unsigned int beginningOfData = byteOffset + accByteOffset;
 	if (componentType == 5125)
 	{
@@ -231,46 +230,46 @@ std::vector<GLuint> Model::getIndices(json accessor)
 std::vector<Texture> Model::getTextures()
 {
 	std::vector<Texture> textures;
-
+	// File directory path from file string
 	std::string fileStr = std::string(file);
 	std::string fileDirectory = fileStr.substr(0, fileStr.find_last_of('/') + 1);
 
-	// Go over all images
+	// Loop through all images in JSON
 	for (unsigned int i = 0; i < JSON["images"].size(); i++)
 	{
-		// uri of current texture
+		// get URI of current texture
 		std::string texPath = JSON["images"][i]["uri"];
 
-		// Check if the texture has already been loaded
+		// Checking if texture has already loaded
 		bool skip = false;
-		for (unsigned int j = 0; j < loadedTexName.size(); j++)
+		for (unsigned int j = 0; j < loadedTextureName.size(); j++)
 		{
-			if (loadedTexName[j] == texPath)
+			if (loadedTextureName[j] == texPath)
 			{
-				textures.push_back(loadedTex[j]);
+				textures.push_back(loadedTexture[j]);
 				skip = true;
 				break;
 			}
 		}
 
-		// If the texture has been loaded, skip this
+		// load new textures if not already loaded
 		if (!skip)
 		{
 			// Load diffuse texture
 			if (texPath.find("baseColor") != std::string::npos)
 			{
-				Texture diffuse = Texture((fileDirectory + texPath).c_str(), "diffuse", loadedTex.size());
+				Texture diffuse = Texture((fileDirectory + texPath).c_str(), "diffuse", loadedTexture.size());
 				textures.push_back(diffuse);
-				loadedTex.push_back(diffuse);
-				loadedTexName.push_back(texPath);
+				loadedTexture.push_back(diffuse);
+				loadedTextureName.push_back(texPath);
 			}
 			// Load specular texture
 			else if (texPath.find("metallicRoughness") != std::string::npos)
 			{
-				Texture specular = Texture((fileDirectory + texPath).c_str(), "specular", loadedTex.size());
+				Texture specular = Texture((fileDirectory + texPath).c_str(), "specular", loadedTexture.size());
 				textures.push_back(specular);
-				loadedTex.push_back(specular);
-				loadedTexName.push_back(texPath);
+				loadedTexture.push_back(specular);
+				loadedTextureName.push_back(texPath);
 			}
 		}
 	}
@@ -286,6 +285,7 @@ std::vector<Vertex> Model::assembleVertices
 )
 {
 	std::vector<Vertex> vertices;
+	// Assemble vertices by combining position, normal and texture
 	for (int i = 0; i < positions.size(); i++)
 	{
 		vertices.push_back
@@ -305,6 +305,7 @@ std::vector<Vertex> Model::assembleVertices
 std::vector<glm::vec2> Model::groupFloatsVec2(std::vector<float> floatVec)
 {
 	std::vector<glm::vec2> vectors;
+	// groups floats into 2d vectors
 	for (int i = 0; i < floatVec.size(); i)
 	{
 		vectors.push_back(glm::vec2(floatVec[i++], floatVec[i++]));
@@ -314,6 +315,7 @@ std::vector<glm::vec2> Model::groupFloatsVec2(std::vector<float> floatVec)
 std::vector<glm::vec3> Model::groupFloatsVec3(std::vector<float> floatVec)
 {
 	std::vector<glm::vec3> vectors;
+	// groups floats into 3d vectors
 	for (int i = 0; i < floatVec.size(); i)
 	{
 		vectors.push_back(glm::vec3(floatVec[i++], floatVec[i++], floatVec[i++]));
@@ -323,6 +325,7 @@ std::vector<glm::vec3> Model::groupFloatsVec3(std::vector<float> floatVec)
 std::vector<glm::vec4> Model::groupFloatsVec4(std::vector<float> floatVec)
 {
 	std::vector<glm::vec4> vectors;
+	// groups floats into 4d vectors
 	for (int i = 0; i < floatVec.size(); i)
 	{
 		vectors.push_back(glm::vec4(floatVec[i++], floatVec[i++], floatVec[i++], floatVec[i++]));

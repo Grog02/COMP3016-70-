@@ -16,12 +16,14 @@ struct Vertex
 
 class VBO
 {
-public:
+public:	
 	GLuint ID;
+	// Creates VBO object from vertices
 	VBO(std::vector<Vertex>& vertices);
+	// Separate VBO object from floats
 	VBO(GLfloat* vertices, GLsizeiptr size);
 
-
+	// Binds, unbinds and deletes VBO
 	void Bind();
 	void Unbind();
 	void Delete();
