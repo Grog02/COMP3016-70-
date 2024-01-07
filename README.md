@@ -39,4 +39,5 @@ Shaders (default.vert/frag files) is used.
 My initials (GR) have been placed on one of the planets as my signature.
 
 ## Conclusion
-Despite this being one of the hardest programming challenges I have faced to date, I think I have done very well in meeting the pitch expectations I set myself
+Despite this being one of the hardest programming challenges I have faced to date, I think I have done very well in meeting the pitch expectations I set myself. 
+Had I been given more time or had more experience and knowledge in OpenGL, I would have added a better variety of planets such as a ring around one planet to represent Saturn or a much larger planet emitting heavy light to act as the Sun.
