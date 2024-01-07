@@ -3,7 +3,7 @@
 This application is a 3d Visualisation of Space. With models loaded to represent planets
 
 ## Features
-###3D Model loading
+### 3D Model loading
 
 ### Texture loading
 
