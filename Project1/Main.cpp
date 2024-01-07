@@ -102,7 +102,7 @@ int main()
 		model6.Draw(shaderProgram, camera);
 		model7.Draw(shaderProgram, camera);
 		model8.Draw(shaderProgram, camera);
-		//model9.Draw(shaderProgram, camera);
+		model9.Draw(shaderProgram, camera);
 		
 
 		// swap back buffer with front
