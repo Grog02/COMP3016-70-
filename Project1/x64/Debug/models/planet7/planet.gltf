@@ -67,8 +67,8 @@
 	"images":[
 		{
 			"mimeType":"image/jpeg",
-			"name":"rocks_ground_04_rough_8k",
-			"uri":"Textures/rocks_ground_04_rough_8k.jpg"
+			"name":"baseColor",
+			"uri":"Textures/baseColor.jpg"
 		}
 	],
 	"accessors":[

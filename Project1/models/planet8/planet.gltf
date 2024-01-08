@@ -60,9 +60,9 @@
 	],
 	"images":[
 		{
-			"mimeType":"image/jpeg",
-			"name":"asphalt_03_diff_8k",
-			"uri":"Textures/asphalt_03_diff_8k.jpg"
+			"mimeType": "image/jpeg",
+			"name": "basColor",
+			"uri": "Textures/basColor.jpg"
 		}
 	],
 	"accessors":[

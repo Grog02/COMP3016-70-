@@ -66,10 +66,8 @@ int main()
 	Model model2("models/planet3/planet3.gltf");
 	Model model3("models/planet4/planet6.gltf");
 	Model model4("models/planet5/planet.gltf");
-	Model model5("models/planet6/planet.gltf");
 	Model model6("models/planet7/planet.gltf");
 	Model model7("models/planet8/planet.gltf");
-	Model model8("models/planet9/moon.gltf");
 	Model model9("models/planet10/jupiter.gltf");
 
 	// Swap back and front Buffer
@@ -98,10 +96,8 @@ int main()
 		model2.Draw(shaderProgram, camera);
 		model3.Draw(shaderProgram, camera);
 		model4.Draw(shaderProgram, camera);
-		model5.Draw(shaderProgram, camera);
 		model6.Draw(shaderProgram, camera);
 		model7.Draw(shaderProgram, camera);
-		model8.Draw(shaderProgram, camera);
 		model9.Draw(shaderProgram, camera);
 		
 
